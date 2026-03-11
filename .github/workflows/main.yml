@@ -9,8 +9,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout my-project-infra repository
         uses: actions/checkout@v4
+        with:
+          repository: M7MDX69/my-project-infra
+          path: my-project-infra
+          
+      - name: Checkout my-frontend-app repository
+        uses: actions/checkout@v4
+        with:
+          repository: M7MDX69/my-frontend-app
+          path: my-frontend-app
+          
+      - name: Checkout my-backend-app repository
+        uses: actions/checkout@v4
+        with:
+          repository: M7MDX69/my-backend-app
+          path: my-backend-app
+          
       - name:  configure Aws Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -29,11 +45,11 @@ jobs:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: 
-          cd my-frontend-app
+          cd my-frontend-app &&\
           docker buildx build --platform linux/amd64 \
             --build-arg REACT_APP_BACKEND_URL="${REACT_APP_BACKEND_URL}" \
             -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-frontend-app:latest \
-            --no-cache --force-rm --push .
+            --no-cache --force-rm --push . &&\
           cd ..
 
       - name: build and push backend to ecr
@@ -42,11 +58,11 @@ jobs:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          cd my-backend-app
+          cd my-backend-app && \
           docker buildx build --platform linux/amd64 \
             --build-arg REACT_APP_BACKEND_URL="${REACT_APP_BACKEND_URL}" \
             -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-backend-app:latest \
-            --no-cache --force-rm --push .
+            --no-cache --force-rm --push . &&\
           cd ..
 
       - name: Deploy to EC2 via SSH
@@ -56,7 +72,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-                  cd ~/my-project-infra
+                  cd ~/my-project-infra 
                   git pull origin main
                   aws ecr get-login-password --region ${{secrets.AWS_REGION}} | docker login --username AWS --password-stdin ${{secrets.AWS_ACCOUNT_ID}}.dkr.ecr.${{secrets.AWS_REGION}}.amazonaws.com
                   docker compose down 

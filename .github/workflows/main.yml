@@ -46,12 +46,12 @@ jobs:
           REACT_APP_BACKEND_URL: http://${{ secrets.EC2_HOST }}:8000/api/
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: 
-          cd my-frontend-app &&\
+        run: |
+          cd my-frontend-app 
           docker buildx build --platform linux/amd64 \
             --build-arg REACT_APP_BACKEND_URL="${REACT_APP_BACKEND_URL}" \
             -t ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/my-frontend-app:latest \
-            --no-cache --force-rm --push . &&\
+            --no-cache --force-rm --push . 
           cd ..
 
       - name: build and push backend to ecr

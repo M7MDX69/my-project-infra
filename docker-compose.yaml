@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   frontend:
-    build: ./my-frontend-app
+    image: 981498564176.dkr.ecr.eu-north-1.amazonaws.com/my-frontend-app:latest
     ports:
-      - "3000:80"
+      - "80:80"
     restart: always
     environment:
       - REACT_APP_BACKEND_URL=http://backend:8000/api/
   backend:
-    build: ./my-backend-app
+    image: 981498564176.dkr.ecr.eu-north-1.amazonaws.com/my-backend-app:latest
     ports:
       - "8000:8000"
     environment:
@@ -18,9 +18,9 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_HOST: db
       MYSQL_PORT: 3306
-      DJANGO_SECRET_KEY: "your_secret_key_here_for_development_only"
+      DJANGO_SECRET_KEY: "o26-xOn1PjQkX7GRTPNhZQfeqU07NYpEua8PtoJ_hICCQRvE9GN6v4vsAi6sUOh4grY"
       DJANGO_ALLOWED_HOSTS: "*"
-      DJANGO_DEBUG: "True"
+      DJANGO_DEBUG: "False"
     
     depends_on:
       db:
